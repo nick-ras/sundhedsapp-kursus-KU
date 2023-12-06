@@ -15,12 +15,15 @@ class MainApp(App):
         self.password = "zBsn9iZWvDKb5YB" #TextInput(hint_text="Enter password", password=True)
         self.username = "nickras10@gmail.com" #TextInput(hint_text="Enter username")
         self.graph_id = "1702957"# self.graphid = TextInput(hint_text="Enter graphid")
+        self.test1 = Label(text="test")
+        self.test2 = Label(text="test")
+        self.test3 = Label(text="test")
         self.username_label = Label(text="Username")
         self.password_label = Label(text="Password")
         self.graph_id_label = Label(text="Graph ID")
         
         #lavet lvl 0 og 1 boxlayouts
-        self.layout_0lvl_full = BoxLayout(orientation='vertical')
+        self.layout_0lvl_full = BoxLayout(orientation='horizontal')
         self.layout_1lvl_input = BoxLayout(orientation='vertical')
         self.layout_1lvl_output = BoxLayout(orientation='vertical')
         
@@ -36,10 +39,15 @@ class MainApp(App):
         lay_3lvl_graphid = BoxLayout(orientation='horizontal')
         
         #USER INPUT added 2 lvl til lvl 3
+        lay_3lvl_username.add_widget(self.test1)
         lay_3lvl_username.add_widget(self.username_label)
-        lay_3lvl_username.add_widget(self.password_label)
         lay_2lvl_user_info_section.add_widget(lay_3lvl_username)
-        # #GØR DET SAMME FOR PASSWORD OG GRAPHID    
+        lay_3lvl_password.add_widget(self.test2)
+        lay_3lvl_password.add_widget(self.password_label)
+        lay_2lvl_user_info_section.add_widget(lay_3lvl_password)
+        lay_3lvl_graphid.add_widget(self.test3)
+        lay_3lvl_graphid.add_widget(self.graph_id_label)
+        lay_2lvl_user_info_section.add_widget(lay_3lvl_graphid)
         
         # #Button 3lvl added til lvl 2
         b = Button(text="Start Instance")
@@ -51,8 +59,9 @@ class MainApp(App):
         self.layout_1lvl_input.add_widget(lay_2lvl_button)
         #1 til 0 level
         self.layout_0lvl_full.add_widget(self.layout_1lvl_input)
+        self.layout_0lvl_full.add_widget(self.layout_1lvl_output)
         
-
+        return self.layout_0lvl_full
     def b_press(self, instance):
         self.create_instance()
 
@@ -88,7 +97,7 @@ class MainApp(App):
             print(e['@label'])
         
         #hvis den skalvises med det samme skal den ned i anden class ovenover
-        self.layout_0lvl_full.add_widget(self.layout_1lvl_output)
+        
         
 
 print("Starting app")
