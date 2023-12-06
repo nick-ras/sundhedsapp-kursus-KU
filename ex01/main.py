@@ -12,8 +12,9 @@ class MyDCRApp(App):
         
     def __init__(self):
         App.__init__(self)
-        self.password = TextInput(hint_text="Enter password", password=True)
-        self.username = TextInput(hint_text="Enter username")
+        self.password = "" #TextInput(hint_text="Enter password", password=True)
+        self.username = "nickras10@gmail.com" #TextInput(hint_text="Enter username")
+        # self.graphid = TextInput(hint_text="Enter graphid")
         self.layout_box = BoxLayout(orientation='vertical')
         
 
@@ -22,8 +23,9 @@ class MyDCRApp(App):
         b.bind(on_press=self.b_press)
         self.b_outer = BoxLayout()
         b_inner = BoxLayout()
-        b_inner.add_widget(self.username)
-        b_inner.add_widget(self.password)
+        # b_inner.add_widget(self.username)
+        # b_inner.add_widget(self.password)
+        # b_inner.add_widget(self.graphid)
         self.b_outer.add_widget(b)
         self.b_outer.add_widget(b_inner)
         return self.b_outer
@@ -32,19 +34,23 @@ class MyDCRApp(App):
         self.create_instance()
 
     def create_instance(self):
-        graph_id = "1702957"
+        graph_id = "1702957" #self.graphid.text
         newsim_response = httpx.post(
             url=f"https://repository.dcrgraphs.net/api/graphs/{graph_id}/sims",
-            auth=(self.username.text, self.password.text))
+            auth=(self.username, self.password))#auth=(self.username.text, self.password.text))
+        print("VALDEMAR" + self.username, self.password)
         
         self.simulation_id = newsim_response.headers['simulationID']
         print("New simulation created with id:", self.simulation_id)
         
         
+
         next_activities_response = httpx.get(
         "https://repository.dcrgraphs.net/api/graphs/" + graph_id +
         "/sims/" + self.simulation_id + "/events?filter=only-enabled",
-        auth=(self.username.text, self.password.text))
+        auth=(self.username, self.password))
+        
+        #auth=(self.username.text, self.password.text))
         
         #formatting the xml to text
         events_xml = next_activities_response.text
