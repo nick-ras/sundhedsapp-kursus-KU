@@ -19,47 +19,39 @@ class MainApp(App):
         self.password_label = Label(text="Password")
         self.graph_id_label = Label(text="Graph ID")
         
-        #self.layout_full = BoxLayout(orientation='vertical')
-        self.layout_vert1 = BoxLayout(orientation='vertical')
-        self.layout_vert2 = BoxLayout(orientation='vertical')
+        #lavet lvl 0 og 1 boxlayouts
+        self.layout_0lvl_full = BoxLayout(orientation='vertical')
+        self.layout_1lvl_input = BoxLayout(orientation='vertical')
+        self.layout_1lvl_output = BoxLayout(orientation='vertical')
         
 
     def build(self):
-        user_info_section = BoxLayout(orientation='vertical')
-        user_labels = BoxLayout(orientation='vertical')
-        #b_inner_inner2 = BoxLayout(orientation='vertical')
-        #b_inner_inner3 = BoxLayout(orientation='vertical')
+        #lavet info section og button lvl 2
+        lay_2lvl_user_info_section = BoxLayout(orientation='vertical')
+        lay_2lvl_button = BoxLayout(orientation='vertical')
         
-        user_labels.add_widget(self.username_label)
-        user_labels.add_widget(self.password_label)
-        user_labels.add_widget(self.password_label)
-        user_info_section.add_widget(user_labels)
+        #lavet boxlayout til username, passowrd og graphid i lvl 3
+        lay_3lvl_username= BoxLayout(orientation='horizontal')
+        lay_3lvl_password = BoxLayout(orientation='horizontal')
+        lay_3lvl_graphid = BoxLayout(orientation='horizontal')
         
-        #b_inner_inner2.add_widget(self.username_label)
-        #b_inner_inner2.add_widget(self.password_label)
-        #b_inner_inner2.add_widget(self.password_label)
-        ##user_labels.add_widget("hey")
-        #user_info_section.add_widget(b_inner_inner2)
+        #USER INPUT added 2 lvl til lvl 3
+        lay_3lvl_username.add_widget(self.username_label)
+        lay_3lvl_username.add_widget(self.password_label)
+        lay_2lvl_user_info_section.add_widget(lay_3lvl_username)
+        # #GØR DET SAMME FOR PASSWORD OG GRAPHID    
         
-        #user_info_section
-        #user_info_section.add_widget(self.graph_id_label)
-        #user_info_section.add_widget(b_inner_inner3)
-        
-        #user_info_section.add_widget(self.username)
-        #user_info_section.add_widget(self.password)
-        #user_info_section.add_widget(self.graphid)
-        
+        # #Button 3lvl added til lvl 2
         b = Button(text="Start Instance")
         b.bind(on_press=self.b_press)
-        self.b_outer = BoxLayout()
+        lay_2lvl_button.add_widget(b)
         
-        self.layout_vert1.add_widget(user_info_section)
-        self.layout_vert1.add_widget(b)
-        self.b_outer.add_widget(self.layout_vert1)
-        self.b_outer.add_widget(self.layout_vert2)
+        # #Added lvl 2 til lvl 1
+        self.layout_1lvl_input.add_widget(lay_2lvl_user_info_section)
+        self.layout_1lvl_input.add_widget(lay_2lvl_button)
+        #1 til 0 level
+        self.layout_0lvl_full.add_widget(self.layout_1lvl_input)
         
-        
-        return self.b_outer
 
     def b_press(self, instance):
         self.create_instance()
@@ -74,8 +66,6 @@ class MainApp(App):
         self.simulation_id = newsim_response.headers['simulationID']
         print("New simulation created with id:", self.simulation_id)
         
-        
-
         next_activities_response = httpx.get(
         "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
         "/sims/" + self.simulation_id + "/events?filter=only-enabled",
@@ -94,9 +84,12 @@ class MainApp(App):
         #terate through all the events and add each label from the event as a Label in our UI. 
         # Access all events by going to the ['events']['event'] entry
         for e in events_json['events']['event']:
-            self.layout_vert2.add_widget(Label(text=e['@label']))
+            self.layout_1lvl_output.add_widget(Label(text=e['@label']))
             print(e['@label'])
-            
+        
+        #hvis den skalvises med det samme skal den ned i anden class ovenover
+        self.layout_0lvl_full.add_widget(self.layout_1lvl_output)
+        
 
 print("Starting app")
 
