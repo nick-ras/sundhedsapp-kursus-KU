@@ -92,6 +92,7 @@ class MainApp(App):
         
         #terate through all the events and add each label from the event as a Label in our UI. 
         # Access all events by going to the ['events']['event'] entry
+        self.layout_1lvl_output.clear_widgets()
         for e in events_json['events']['event']:
             self.layout_1lvl_output.add_widget(Label(text=e['@label']))
             print(e['@label'])
