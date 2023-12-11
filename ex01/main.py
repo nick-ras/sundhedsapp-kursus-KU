@@ -72,7 +72,6 @@ class MainApp(App):
         #auth=(self.username.text, self.password.text))
         #print("VALDEMAR" + self.username, self.password)
         self.simulation_id = newsim_response.headers['simulationID']
-        #print("New simulation created with id:", self.simulation_id)
         
         #viser events for den nye simulation
         next_activities_response = httpx.get(
@@ -121,16 +120,10 @@ class MainApp(App):
                     e['@label']
                     )
 
-            s.manipulate_box_layout = self.layout_1lvl_output.add_widget
+            s.manipulate_box_layout = self.layout_1lvl_output
             #updaterer button_layout automatisk??
-            self.layout_1lvl_output.add_widget(s)
-            print("events_json = " + e['@id'])
-            #her ?????????????????????????+
-    def testfunc(self):
-        self.test = "hey"
-        print("inside testfunc")
-        return("hey return")
-      
+            print("From loop in create..enabled_events    " + e['@id'])
+        self.layout_1lvl_output.add_widget(s)
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
             graph_id: str,
@@ -147,7 +140,6 @@ class SimulationButton(Button, MainApp):
         self.password = password
         self.manipulate_box_layout: BoxLayout = BoxLayout()
         self.bind(on_press=self.execute_event)
-        print("event id in init  " + self.event_id)
         
         #http call to dcr server to execute event
 
