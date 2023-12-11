@@ -114,7 +114,18 @@ class SimulationButton(Button):
         self.username = username
         self.password = password
         self.manipulate_box_layout: BoxLayout = BoxLayout()
-        self.bind(on_press=self.execute_event)       
+        self.bind(on_press=self.execute_event)    
+    def execute_event(self, instance):
+        url = (f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id}/sims/"
+        f"{self.simulation_id}/events/{self.event_id}")
+        # send a post request to dcr server with basic authentication
+        # create the buttons of new enabled events <- explained in (5)
+    def create_buttons_of_enabled_events(
+        graph_id: str,
+        sim_id: str,
+        auth: (str, str),
+        button_layout: BoxLayout):
+        pass  
 
 print("Starting app")
 
