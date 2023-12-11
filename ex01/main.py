@@ -34,6 +34,7 @@ class MainApp(App):
         self.lay_3lvl_password = BoxLayout(orientation='horizontal')
         self.lay_3lvl_graphid = BoxLayout(orientation='horizontal')
 
+
     def build(self):
         #USER INPUT added 2 lvl til lvl 3
         self.lay_3lvl_username.add_widget(self.test1)
@@ -90,8 +91,46 @@ class MainApp(App):
         events_json = xmltodict.parse(events_xml_clean)
         
         #s = SimulationButton(self.graph_id,self.simulation_id, self.username, self.password, "hej")
-        create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), self.layout_1lvl_output, events_json)
+        self.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
         
+        #skaber knapperne til de events der er enabled i dcr serveren
+    def create_buttons_of_enabled_events(self, 
+        graph_id: str,
+        sim_id: str,
+        auth: (str, str),
+        events_json):
+        
+        #fjerner alle knapperne fra forrige simulation
+        self.layout_1lvl_output.clear_widgets()
+        
+        # hvis 1 event vs flere events
+        events = []
+        if not isinstance(events_json['events']['event'], list):
+            events = [events_json['events']['event']]
+        else:
+            events = events_json['events']['event']
+        
+            
+        for e in events:
+            s = SimulationButton(
+                    e['@id'],                
+                    graph_id,                
+                    sim_id,                
+                    auth[0],                
+                    auth[1],                     
+                    e['@label']
+                    )
+
+            s.manipulate_box_layout = self.layout_1lvl_output.add_widget
+            #updaterer button_layout automatisk??
+            self.layout_1lvl_output.add_widget(s)
+            print("events_json = " + e['@id'])
+            #her ?????????????????????????+
+    def testfunc(self):
+        self.test = "hey"
+        print("inside testfunc")
+        return("hey return")
+      
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
             graph_id: str,
@@ -139,45 +178,13 @@ class SimulationButton(Button, MainApp):
         #translate to json dict
         events_json = xmltodict.parse(events_xml_clean)
         
-        create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), self.layout_1lvl_output, events_json)
+        MainApp().create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
         
         #/api/graphs/{id}/sims/{simsid}/events
         # send a post request to dcr server with basic authentication
         # create the buttons of new enabled events <- explained in (5)
 
-#skaber knapperne til de events der er enabled i dcr serveren
-def create_buttons_of_enabled_events(
-    graph_id: str,
-    sim_id: str,
-    auth: (str, str),
-    button_layout: BoxLayout,
-    events_json):   
-    button_layout.clear_widgets()
-    
-    # Hvis der kun er en event, så er det ikke en liste, derfor dette
-    events = []
-    if not isinstance(events_json['events']['event'], list):
-        events = [events_json['events']['event']]
-    else:
-        events = events_json['events']['event']
-    
-        
-    for e in events:
-        s = SimulationButton(
-                e['@id'],                
-                graph_id,                
-                sim_id,                
-                auth[0],                
-                auth[1],                     
-                e['@label']
-                )
-
-        s.manipulate_box_layout = button_layout
-        #updaterer button_layout automatisk??
-        button_layout.add_widget(s)
-        print("events_json = " + e['@id'])
-    #måske add 
 print("Starting app")
 
 if __name__ == '__main__':
-            MainApp().run()
+    mainApp = MainApp().run()
