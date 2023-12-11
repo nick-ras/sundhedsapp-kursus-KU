@@ -99,7 +99,22 @@ class MainApp(App):
         
         #hvis den skalvises med det samme skal den ned i anden class ovenover
         
-        
+class SimulationButton(Button):
+    def __init__(self, event_id: int,
+            graph_id: str,
+            simulation_id: str,
+            username: str,
+            password: str,
+            text: str):
+        Button.__init__(self)
+        self.event_id = event_id
+        self.text = text
+        self.graph_id = graph_id
+        self.simulation_id = simulation_id
+        self.username = username
+        self.password = password
+        self.manipulate_box_layout: BoxLayout = BoxLayout()
+        self.bind(on_press=self.execute_event)       
 
 print("Starting app")
 
