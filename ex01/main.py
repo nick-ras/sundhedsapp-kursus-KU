@@ -91,26 +91,6 @@ class MainApp(App):
         
         #s = SimulationButton(self.graph_id,self.simulation_id, self.username, self.password, "hej")
         create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), self.layout_1lvl_output, events_json)
-        #terate through all the events and add each label from the event as a Label in our UI. 
-        # Access all events by going to the ['events']['event'] entry
-        #self.layout_1lvl_output.clear_widgets()
-        #for e in events_json['events']['event']:
-        #auth=(self.username.text, self.password.text))
-        
-        #    s = SimulationButton(
-        #            e['@id'],                
-        #            self.graph_id,                
-        #            self.simulation_id,                
-        #            self.username,                
-        #            self.password,                     
-        #            e['@label']
-        #            )
-        #    s.manipulate_box_layout = self.layout_1lvl_output
-        #    self.layout_1lvl_output.add_widget(s)
-            #self.layout_1lvl_output.add_widget(Label(text=e['@label']))
-        #print(e['@label'])
-
-        #hvis den skalvises med det samme skal den ned i anden class ovenover
         
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
@@ -174,7 +154,15 @@ def create_buttons_of_enabled_events(
     events_json):   
     button_layout.clear_widgets()
     
-    for e in events_json['events']['event']:
+    # Hvis der kun er en event, så er det ikke en liste, derfor dette
+    events = []
+    if not isinstance(events_json['events']['event'], list):
+        events = [events_json['events']['event']]
+    else:
+        events = events_json['events']['event']
+    
+        
+    for e in events:
         s = SimulationButton(
                 e['@id'],                
                 graph_id,                
@@ -183,11 +171,12 @@ def create_buttons_of_enabled_events(
                 auth[1],                     
                 e['@label']
                 )
+
         s.manipulate_box_layout = button_layout
         #updaterer button_layout automatisk??
         button_layout.add_widget(s)
-
-
+        print("events_json = " + e['@id'])
+    #måske add 
 print("Starting app")
 
 if __name__ == '__main__':
