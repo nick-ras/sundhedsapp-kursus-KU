@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 import xmltodict
 import httpx
+from kivy.graphics import Color
 
 #events_json = None
 
@@ -123,8 +124,9 @@ class MainApp(App):
             events = [events_json['events']['event']]
         else:
             events = events_json['events']['event']
+        print(events)
         
-            
+        #events = [{'@id': 'Breakfast', '@included': 'true', '@enabled': 'true', '@pending': 'false', '@EffectivelyPending': 'false', '@EffectivelyIncluded': 'true', '@executed': 'false', '@fullPath': 'Breakfast', '@roles': 'Student', '@groups': '', '@description': '', '@label': 'Breakfast', '@eventType': '', '@phases': '', '@deadline': '', '@sequence': '1', '@parent': '', '@type': '', '@referId': '', 'eventTypeData': None}, {'@id': 'GetUpInTheMorning', '@included': 'true', '@enabled': 'true', '@pending': 'false', '@EffectivelyPending': 'false', '@EffectivelyIncluded': 'true', '@executed': 'true', '@fullPath': 'GetUpInTheMorning', '@roles': 'Student', '@groups': '', '@description': '', '@label': 'Get up in the morning', '@eventType': '', '@phases': '', '@deadline': '', '@sequence': '2', '@parent': '', '@type': '', '@referId': '', 'eventTypeData': None}]
         for e in events:
             s_inst = SimulationButton(
                     e['@id'],                
@@ -134,6 +136,9 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
+            #nedenstående farver alt gult, måske fejlen er i dcr grafen
+            # if e['@pending'] == 'true':
+            #     s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
             print("From loop in create..enabled_events    " + e['@id'])
 
