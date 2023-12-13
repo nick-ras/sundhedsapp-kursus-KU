@@ -13,17 +13,16 @@ class MainApp(App):
         
     def __init__(self):
         App.__init__(self)
-        #Login
-        self.password = "zBsn9iZWvDKb5YB" #TextInput(hint_text="Enter password", password=True)
-        self.username = "nickras10@gmail.com" #TextInput(hint_text="Enter username")
-        self.graph_id = "1702957"# self.graphid = TextInput(hint_text="Enter graphid")
-        #Labels
-        self.test1 = Label(text="test")
-        self.test2 = Label(text="test")
-        self.test3 = Label(text="test")
+        
         self.username_label = Label(text="Username")
         self.password_label = Label(text="Password")
         self.graph_id_label = Label(text="Graph ID")
+     
+        #Login
+        self.password = TextInput(hint_text="Enter username",  text="zBsn9iZWvDKb5YB")
+        self.username = TextInput(hint_text="Enter username",  text="nickras10@gmail.com")
+        self.graph_id = TextInput(hint_text="Enter graph id",  text="1702957")
+    
         
         #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
@@ -41,14 +40,14 @@ class MainApp(App):
 
     def build(self):
         #USER INPUT added 2 lvl til lvl 3
-        self.lay_3lvl_username.add_widget(self.test1)
         self.lay_3lvl_username.add_widget(self.username_label)
+        self.lay_3lvl_username.add_widget(self.username)
         self.lay_2lvl_user_info_section.add_widget(self.lay_3lvl_username)
-        self.lay_3lvl_password.add_widget(self.test2)
         self.lay_3lvl_password.add_widget(self.password_label)
+        self.lay_3lvl_password.add_widget(self.password)
         self.lay_2lvl_user_info_section.add_widget(self.lay_3lvl_password)
-        self.lay_3lvl_graphid.add_widget(self.test3)
         self.lay_3lvl_graphid.add_widget(self.graph_id_label)
+        self.lay_3lvl_graphid.add_widget(self.graph_id)
         self.lay_2lvl_user_info_section.add_widget(self.lay_3lvl_graphid)
         
         # #Button 3lvl added til lvl 2
@@ -70,15 +69,15 @@ class MainApp(App):
     
     def post_request(self):
         newsim_response = httpx.post(
-            url=f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id}/sims",
-            auth=(self.username, self.password))
+            url=f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id.text}/sims",
+            auth=(self.username.text, self.password.text))
         return newsim_response
     
     def get_request(self):
         get_req = httpx.get(
-        "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
+        "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id.text +
         "/sims/" + self.simulation_id + "/events?filter=only-enabled",
-        auth=(self.username, self.password))
+        auth=(self.username.text, self.password.text))
         return get_req
     
     def text_to_json(self, response):
@@ -106,7 +105,7 @@ class MainApp(App):
         
         
         #s = SimulationButton(self.graph_id,self.simulation_id, self.username, self.password, "hej")
-        self.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
+        self.create_buttons_of_enabled_events(self.graph_id.text, self.simulation_id, (self.username.text, self.password.text), events_json)
         
         #skaber knapperne til de events der er enabled i dcr serveren
     def create_buttons_of_enabled_events(self, 
@@ -126,7 +125,6 @@ class MainApp(App):
             events = events_json['events']['event']
         print(events)
         
-        #events = [{'@id': 'Breakfast', '@included': 'true', '@enabled': 'true', '@pending': 'false', '@EffectivelyPending': 'false', '@EffectivelyIncluded': 'true', '@executed': 'false', '@fullPath': 'Breakfast', '@roles': 'Student', '@groups': '', '@description': '', '@label': 'Breakfast', '@eventType': '', '@phases': '', '@deadline': '', '@sequence': '1', '@parent': '', '@type': '', '@referId': '', 'eventTypeData': None}, {'@id': 'GetUpInTheMorning', '@included': 'true', '@enabled': 'true', '@pending': 'false', '@EffectivelyPending': 'false', '@EffectivelyIncluded': 'true', '@executed': 'true', '@fullPath': 'GetUpInTheMorning', '@roles': 'Student', '@groups': '', '@description': '', '@label': 'Get up in the morning', '@eventType': '', '@phases': '', '@deadline': '', '@sequence': '2', '@parent': '', '@type': '', '@referId': '', 'eventTypeData': None}]
         for e in events:
             s_inst = SimulationButton(
                     e['@id'],                
@@ -137,8 +135,8 @@ class MainApp(App):
                     e['@label']
                     )
             #nedenstående farver alt gult, måske fejlen er i dcr grafen
-            # if e['@pending'] == 'true':
-            #     s_inst.color = (1,1,0,1)
+            if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
+                s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
             print("From loop in create..enabled_events    " + e['@id'])
 
