@@ -66,31 +66,43 @@ class MainApp(App):
     def b_press(self, instance):
         self.create_instance()
     #Viser workflow før man trykker på boxe
-    def create_instance(self):
-        #graph_id = "1702957" #self.graphid.text
-        #logger ind og får et nyt simulation id
+    
+    def post_request(self):
         newsim_response = httpx.post(
             url=f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id}/sims",
             auth=(self.username, self.password))
+        return newsim_response
+    
+    def get_request(self):
+        get_req = httpx.get(
+        "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
+        "/sims/" + self.simulation_id + "/events?filter=only-enabled",
+        auth=(self.username, self.password))
+        return get_req
+    
+    def text_to_json(self, response):
+        events_xml = response.text
+        events_xml_no_quotes = events_xml[1:len(events_xml)-1]
+        events_xml_clean = events_xml_no_quotes.replace('\\\"', "\"")
+        #translate to json dict
+        return xmltodict.parse(events_xml_clean)
+    
+    def create_instance(self):
+        #graph_id = "1702957" #self.graphid.text
+        #logger ind og får et nyt simulation id
+        newsim_response =  self.post_request()
+        
         #auth=(self.username.text, self.password.text))
         #print("VALDEMAR" + self.username, self.password)
         self.simulation_id = newsim_response.headers['simulationID']
         
         #viser events for den nye simulation
-        next_activities_response = httpx.get(
-        "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
-        "/sims/" + self.simulation_id + "/events?filter=only-enabled",
-        auth=(self.username, self.password))
-        
+        next_activities_response = self.get_request()
         #auth=(self.username.text, self.password.text))
         
         #formatting the xml to text
-        events_xml = next_activities_response.text
-        events_xml_no_quotes = events_xml[1:len(events_xml)-1]
-        events_xml_clean = events_xml_no_quotes.replace('\\\"', "\"")
+        events_json = self.text_to_json(next_activities_response)
         
-        #translate to json dict
-        events_json = xmltodict.parse(events_xml_clean)
         
         #s = SimulationButton(self.graph_id,self.simulation_id, self.username, self.password, "hej")
         self.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
@@ -152,19 +164,9 @@ class SimulationButton(Button, MainApp):
         httpx.post(url, auth=(self.username,self.password))
         
         #Samme url som i create_instance
-        next_activities_response = httpx.get(
-        "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
-        "/sims/" + self.simulation_id + "/events?filter=only-enabled",
-        auth=(self.username, self.password))
-        #auth=(self.username.text, self.password.text))
+        next_activities_response = current_main_app_instance.get_request()
         
-        #formatting the xml to text
-        events_xml = next_activities_response.text
-        events_xml_no_quotes = events_xml[1:len(events_xml)-1]
-        events_xml_clean = events_xml_no_quotes.replace('\\\"', "\"")
-        
-        #translate to json dict
-        events_json = xmltodict.parse(events_xml_clean)
+        events_json = current_main_app_instance.text_to_json(next_activities_response)
         
         #denne opdaterer current main app instance med ny events_json, og skaber nye knapper
         current_main_app_instance.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
