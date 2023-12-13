@@ -161,12 +161,13 @@ class SimulationButton(Button, MainApp):
         
         #http call to dcr server to execute event
 
-    def execute_event(self, instance):
+    def post_with_event_id(self):
         url = (f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id}/sims/"
         f"{self.simulation_id}/events/{self.event_id}")
-
-        #Request events
         httpx.post(url, auth=(self.username,self.password))
+
+    def execute_event(self, instance):
+        self.post_with_event_id()
         
         #Samme url som i create_instance
         next_activities_response = current_main_app_instance.get_request()
