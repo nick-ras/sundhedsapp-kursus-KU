@@ -12,9 +12,11 @@ class MainApp(App):
         
     def __init__(self):
         App.__init__(self)
+        #Login
         self.password = "zBsn9iZWvDKb5YB" #TextInput(hint_text="Enter password", password=True)
         self.username = "nickras10@gmail.com" #TextInput(hint_text="Enter username")
         self.graph_id = "1702957"# self.graphid = TextInput(hint_text="Enter graphid")
+        #Labels
         self.test1 = Label(text="test")
         self.test2 = Label(text="test")
         self.test3 = Label(text="test")
@@ -22,14 +24,15 @@ class MainApp(App):
         self.password_label = Label(text="Password")
         self.graph_id_label = Label(text="Graph ID")
         
-        #lavet lvl 0 og 1 boxlayouts
+        #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
+        #lavet input og output lvl 1
         self.layout_1lvl_input = BoxLayout(orientation='vertical')
         self.layout_1lvl_output = BoxLayout(orientation='vertical')
         #lavet info section og button lvl 2
         self.lay_2lvl_user_info_section = BoxLayout(orientation='vertical')
         self.lay_2lvl_button = BoxLayout(orientation='vertical')
-        #lavet boxlayout til username, passowrd og graphid i lvl 3
+        #lavet boxlayout til username, password og graphid i lvl 3
         self.lay_3lvl_username= BoxLayout(orientation='horizontal')
         self.lay_3lvl_password = BoxLayout(orientation='horizontal')
         self.lay_3lvl_graphid = BoxLayout(orientation='horizontal')
@@ -111,7 +114,7 @@ class MainApp(App):
         
             
         for e in events:
-            s = SimulationButton(
+            s_inst = SimulationButton(
                     e['@id'],                
                     graph_id,                
                     sim_id,                
@@ -119,11 +122,9 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
-
-            s.manipulate_box_layout = self.layout_1lvl_output
-            #updaterer button_layout automatisk??
+            self.layout_1lvl_output.add_widget(s_inst)
             print("From loop in create..enabled_events    " + e['@id'])
-        self.layout_1lvl_output.add_widget(s)
+
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
             graph_id: str,
@@ -150,11 +151,6 @@ class SimulationButton(Button, MainApp):
         #Request events
         httpx.post(url, auth=(self.username,self.password))
         
-        #Change simulation ID according to where we are in list
-        #self.simulation_id = newsim_response.headers['simulationID']
-        #httpx.get(url)
-        #httpx.post(url)
-        #next_activities_response = httpx.get(url, auth=(self.username,self.password))
         #Samme url som i create_instance
         next_activities_response = httpx.get(
         "https://repository.dcrgraphs.net/api/graphs/" + self.graph_id +
@@ -170,13 +166,13 @@ class SimulationButton(Button, MainApp):
         #translate to json dict
         events_json = xmltodict.parse(events_xml_clean)
         
-        MainApp().create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
-        
-        #/api/graphs/{id}/sims/{simsid}/events
-        # send a post request to dcr server with basic authentication
-        # create the buttons of new enabled events <- explained in (5)
+        #denne opdaterer current main app instance med ny events_json, og skaber nye knapper
+        current_main_app_instance.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
 
 print("Starting app")
 
+current_main_app_instance = None
+
 if __name__ == '__main__':
-    mainApp = MainApp().run()
+    current_main_app_instance = MainApp()
+    current_main_app_instance.run()
