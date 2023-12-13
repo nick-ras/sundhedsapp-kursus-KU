@@ -84,27 +84,20 @@ class MainApp(App):
         events_xml = response.text
         events_xml_no_quotes = events_xml[1:len(events_xml)-1]
         events_xml_clean = events_xml_no_quotes.replace('\\\"', "\"")
-        #translate to json dict
         return xmltodict.parse(events_xml_clean)
     
     def create_instance(self):
-        #graph_id = "1702957" #self.graphid.text
         #logger ind og får et nyt simulation id
         newsim_response =  self.post_request()
-        
-        #auth=(self.username.text, self.password.text))
-        #print("VALDEMAR" + self.username, self.password)
         self.simulation_id = newsim_response.headers['simulationID']
         
         #viser events for den nye simulation
         next_activities_response = self.get_request()
-        #auth=(self.username.text, self.password.text))
         
         #formatting the xml to text
         events_json = self.text_to_json(next_activities_response)
         
-        
-        #s = SimulationButton(self.graph_id,self.simulation_id, self.username, self.password, "hej")
+        #skaber alle simulation buttons som classes
         self.create_buttons_of_enabled_events(self.graph_id.text, self.simulation_id, (self.username.text, self.password.text), events_json)
         
         #skaber knapperne til de events der er enabled i dcr serveren
@@ -117,7 +110,7 @@ class MainApp(App):
         #fjerner alle knapperne fra forrige simulation
         self.layout_1lvl_output.clear_widgets()
         
-        # hvis 1 event vs flere events
+        # Hvis flere events så er det en liste af dicts tror jeg
         events = []
         if not isinstance(events_json['events']['event'], list):
             events = [events_json['events']['event']]
@@ -134,7 +127,7 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
-            #nedenstående farver alt gult, måske fejlen er i dcr grafen
+            #Det farver pending gult, men virker ikke altid
             if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
                 s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
