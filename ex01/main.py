@@ -123,8 +123,6 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
-            
-            print("From loop in create..enabled_events   pending is here " + e['@pending'] + e['@EffectivelyPending'])
 
             #Det farver pending gult
             if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
