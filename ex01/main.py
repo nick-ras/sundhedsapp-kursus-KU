@@ -19,13 +19,10 @@ class MainApp(App):
         self.graph_id_label = Label(text="Graph ID")
      
         #Login
-        # self.username = TextInput(hint_text="Enter username",  text="nickras10@gmail.com")
-        # self.password = TextInput(hint_text="Enter password",  text="zBsn9iZWvDKb5YB")
-        # self.graph_id = TextInput(hint_text="Enter graph id",  text="1702957")
-        self.username = TextInput(hint_text="Enter username",  text="birgitte_stage@yahoo.dk")
-        self.password = TextInput(hint_text="Enter password",  text="Valdemar_Nick91")
-        self.graph_id = TextInput(hint_text="Enter graph id",  text="1704571")
-        
+        self.username = TextInput(hint_text="Enter username")
+        self.password = TextInput(hint_text="Enter password")
+        self.graph_id = TextInput(hint_text="Enter graph id")
+
         #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
         #lavet input og output lvl 1
@@ -101,8 +98,7 @@ class MainApp(App):
         
         #skaber alle simulation buttons som classes
         self.create_buttons_of_enabled_events(self.graph_id.text, self.simulation_id, (self.username.text, self.password.text), events_json)
-        
-        #skaber knapperne til de events der er enabled i dcr serveren
+
     def create_buttons_of_enabled_events(self, 
         graph_id: str,
         sim_id: str,
@@ -112,13 +108,11 @@ class MainApp(App):
         #fjerner alle knapperne fra forrige simulation
         self.layout_1lvl_output.clear_widgets()
         
-        # Hvis flere events så er det en liste af dicts tror jeg
-        events = []
+        # Hvis flere events så er det en liste af dicts events = []
         if not isinstance(events_json['events']['event'], list):
             events = [events_json['events']['event']]
         else:
             events = events_json['events']['event']
-        #print(events)
         
         for e in events:
             s_inst = SimulationButton(
@@ -131,7 +125,8 @@ class MainApp(App):
                     )
             
             print("From loop in create..enabled_events   pending is here " + e['@pending'] + e['@EffectivelyPending'])
-            #Det farver pending gult, men virker ikke altid
+
+            #Det farver pending gult
             if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
                 s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
@@ -152,8 +147,6 @@ class SimulationButton(Button, MainApp):
         self.password = password
         self.manipulate_box_layout: BoxLayout = BoxLayout()
         self.bind(on_press=self.execute_event)
-        
-        #http call to dcr server to execute event
 
     def post_with_event_id(self):
         url = (f"https://repository.dcrgraphs.net/api/graphs/{self.graph_id}/sims/"
