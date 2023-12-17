@@ -19,10 +19,12 @@ class MainApp(App):
         self.graph_id_label = Label(text="Graph ID")
      
         #Login
-        self.password = TextInput(hint_text="Enter username",  text="zBsn9iZWvDKb5YB")
-        self.username = TextInput(hint_text="Enter username",  text="nickras10@gmail.com")
-        self.graph_id = TextInput(hint_text="Enter graph id",  text="1702957")
-    
+        # self.username = TextInput(hint_text="Enter username",  text="nickras10@gmail.com")
+        # self.password = TextInput(hint_text="Enter password",  text="zBsn9iZWvDKb5YB")
+        # self.graph_id = TextInput(hint_text="Enter graph id",  text="1702957")
+        self.username = TextInput(hint_text="Enter username",  text="birgitte_stage@yahoo.dk")
+        self.password = TextInput(hint_text="Enter password",  text="Valdemar_Nick91")
+        self.graph_id = TextInput(hint_text="Enter graph id",  text="1704571")
         
         #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
@@ -116,7 +118,7 @@ class MainApp(App):
             events = [events_json['events']['event']]
         else:
             events = events_json['events']['event']
-        print(events)
+        #print(events)
         
         for e in events:
             s_inst = SimulationButton(
@@ -127,11 +129,12 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
+            
+            print("From loop in create..enabled_events   pending is here " + e['@pending'] + e['@EffectivelyPending'])
             #Det farver pending gult, men virker ikke altid
             if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
                 s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
-            print("From loop in create..enabled_events    " + e['@id'])
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
