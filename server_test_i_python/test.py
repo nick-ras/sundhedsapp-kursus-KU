@@ -1,15 +1,15 @@
 import mysql.connector
+from os import environ as env
 
 try:
     # Define the database connection parameters
     cnx = mysql.connector.connect(
-        user="cloud",
-        password="{your_password}",
+        user=env.get("USERNAME"),
+        password=env.get("PASSWORD"),
         host="cloud-kursus.mysql.database.azure.com",
         port=3306,
-        database="{your_database}",
-        ssl_ca="{ca-cert filename}",
-        ssl_disabled=False
+        database=env.get("DATABASE"),
+        ssl_disabled=True
     )
 
     # If the connection is successful, print a success message
