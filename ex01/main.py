@@ -19,9 +19,9 @@ class MainApp(App):
         self.graph_id_label = Label(text="Graph ID")
      
         #Login
-        self.username = TextInput(hint_text="Enter username")
-        self.password = TextInput(hint_text="Enter password")
-        self.graph_id = TextInput(hint_text="Enter graph id")
+        self.username = TextInput(hint_text="Enter username",text="birgitte_stage@yahoo.dk")
+        self.password = TextInput(hint_text="Enter password",text="Valdemar_Nick91")
+        self.graph_id = TextInput(hint_text="Enter graph id",text="1704571")
 
         #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
@@ -89,6 +89,7 @@ class MainApp(App):
         #logger ind og får et nyt simulation id
         newsim_response =  self.post_request()
         self.simulation_id = newsim_response.headers['simulationID']
+        print("simulation id: " + self.simulation_id)
         
         #viser events for den nye simulation
         next_activities_response = self.get_request()
