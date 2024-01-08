@@ -36,7 +36,7 @@ class MainApp(App):
         self.lay_3lvl_password = BoxLayout(orientation='horizontal')
         self.lay_3lvl_graphid = BoxLayout(orientation='horizontal')
 
-
+    
     def build(self):
         #USER INPUT added 2 lvl til lvl 3
         self.lay_3lvl_username.add_widget(self.username_label)
@@ -114,9 +114,12 @@ class MainApp(App):
             events = [events_json['events']['event']]
         else:
             events = events_json['events']['event']
-        
         for e in events:
-            s_inst = SimulationButton(
+            print(events_json)
+            print("\n\n\n\n")
+            
+            if e['@roles'] == 'Nurse':
+                s_inst = SimulationButton(
                     e['@id'],                
                     graph_id,                
                     sim_id,                
@@ -124,11 +127,10 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
-
             #Det farver pending gult
-            if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
-                s_inst.color = (1,1,0,1)
-            self.layout_1lvl_output.add_widget(s_inst)
+                if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
+                    s_inst.color = (1,1,0,1)
+        self.layout_1lvl_output.add_widget(s_inst)
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
