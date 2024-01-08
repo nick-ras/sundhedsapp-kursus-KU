@@ -125,6 +125,10 @@ class MainApp(App):
         self.layout_0lvl_full.add_widget(self.layout_1lvl_output)
         
         return self.layout_0lvl_full
+    
+    def b_instance(self, instance):
+        self.MainApp.Exit()
+    
     def b_press(self, instance):
         self.create_instance()
 
@@ -210,6 +214,11 @@ class MainApp(App):
         else:
             events = events_json['events']['event']
         
+        self.lay_2lvl_button.clear_widgets()
+        bu = Button(text="Terminate")
+        self.lay_2lvl_button.add_widget(bu)
+        counter = 0
+        
         for e in events:
             print(events_json)
             print("\n\n\n\n")
@@ -229,7 +238,12 @@ class MainApp(App):
                 #Det farver pending gult
                 if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
                     s_inst.color = (1,1,0,1)
-            self.layout_1lvl_output.add_widget(s_inst)
+                    counter += 1
+                
+                if counter == 0:
+                    bu.bind(on_press=self.b_instance)   
+                     
+                self.layout_1lvl_output.add_widget(s_inst)
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,

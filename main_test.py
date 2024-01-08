@@ -89,16 +89,17 @@ class MainApp(App):
     def create_instance(self):
         #logger ind og får et nyt simulation id
         newsim_response =  self.post_request()
-        self.simulation_id = newsim_response.headers['simulationID']
-        
-        #viser events for den nye simulation
-        next_activities_response = self.get_request()
-        
-        #formatting the xml to text
-        events_json = self.text_to_json(next_activities_response)
-        
-        #skaber alle simulation buttons som classes
-        self.create_buttons_of_enabled_events(self.graph_id.text, self.simulation_id, (self.username.text, self.password.text), events_json)
+        if str(newsim_response) == "<Response [201 Created]>":
+            self.simulation_id = newsim_response.headers['simulationID']
+            
+            #viser events for den nye simulation
+            next_activities_response = self.get_request()
+            
+            #formatting the xml to text
+            events_json = self.text_to_json(next_activities_response)
+            
+            #skaber alle simulation buttons som classes
+            self.create_buttons_of_enabled_events(self.graph_id.text, self.simulation_id, (self.username.text, self.password.text), events_json)
         
         #skaber knapperne til de events der er enabled i dcr serveren
     def create_buttons_of_enabled_events(self, 
@@ -119,6 +120,10 @@ class MainApp(App):
         print(events)
         
         for e in events:
+            print(events_json)
+            print("\n\n\n\n")
+            
+            if e['@roles'] == self.roles.text
             s_inst = SimulationButton(
                     e['@id'],                
                     graph_id,                
