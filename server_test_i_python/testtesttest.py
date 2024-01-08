@@ -84,9 +84,10 @@ class MainApp(App):
                             print(row)
 
                     select_statement3 = f"""
-                    SELECT Role FROM DCRUsers WHERE Email = '{self.username.text}';
+                    SELECT Role FROM DCRUsers WHERE Email = %s;
                     """
-                    cursor.execute(select_statement3)
+                    data = (self.username.text,)
+                    cursor.execute(select_statement3, data)
                     self.role = cursor.fetchone()
                     print(f"ROLLE: {self.role}")
 
