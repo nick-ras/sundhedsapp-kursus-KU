@@ -5,7 +5,7 @@ try:
 		# Define the database connection parameters
 		cnx = mysql.connector.connect(
 				user=env.get("USERNAME"),
-				password=env.get("PASSWORD"),
+				password="Valdemar20-",#env.get("PASSWORD"),
 				host="cloud-kursus.mysql.database.azure.com",
 				port=3306,
 				database=env.get("DATABASE"),
@@ -26,7 +26,12 @@ try:
 				# INSERT INTO DCRTable (Graph_id, Simulation_id, Process_instance_name, Description) VALUES ("test", "test", "test", "test");
 				# """
 				# cursor.execute(create_table_sql)
+				
 				cnx.commit()
+				temp = "USE `cloud-kursus`;"
+				cursor.execute(temp)
+
+
 				select_statement = """
 				SELECT * FROM DCRTable;
 				"""
