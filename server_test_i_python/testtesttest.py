@@ -211,18 +211,24 @@ class MainApp(App):
             events = events_json['events']['event']
         
         for e in events:
-            s_inst = SimulationButton(
-                    e['@id'],                
-                    graph_id,                
-                    sim_id,                
-                    auth[0],                
-                    auth[1],                     
-                    e['@label']
-                    )
+            print(events_json)
+            print("\n\n\n\n")
+            print(self.role[0])
+            print(e['@roles'])
+            print("\n\n\n\n")
+            if e['@roles'] == self.role[0]:
+                s_inst = SimulationButton(
+                        e['@id'],                
+                        graph_id,                
+                        sim_id,                
+                        auth[0],                
+                        auth[1],                     
+                        e['@label']
+                        )
 
-            #Det farver pending gult
-            if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
-                s_inst.color = (1,1,0,1)
+                #Det farver pending gult
+                if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
+                    s_inst.color = (1,1,0,1)
             self.layout_1lvl_output.add_widget(s_inst)
 
 class SimulationButton(Button, MainApp):
