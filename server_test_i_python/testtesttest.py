@@ -126,8 +126,9 @@ class MainApp(App):
         
         return self.layout_0lvl_full
     
+    #Exit app 
     def b_instance(self, instance):
-        self.MainApp.Exit()
+        App.get_running_app().stop()
     
     def b_press(self, instance):
         self.create_instance()
@@ -239,11 +240,13 @@ class MainApp(App):
                 if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
                     s_inst.color = (1,1,0,1)
                     counter += 1
-                
-                if counter == 0:
-                    bu.bind(on_press=self.b_instance)   
+             
                      
                 self.layout_1lvl_output.add_widget(s_inst)
+                
+        #Check if there are no pending activities before terminating    
+        if counter == 0:
+            bu.bind(on_press=self.b_instance)  
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
