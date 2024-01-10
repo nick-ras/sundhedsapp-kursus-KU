@@ -51,37 +51,8 @@ class MainApp(App):
 
                     # Create a cursor object to interact with the database
                     cursor = self.cnx.cursor()
-
-                    # SQL statement to create the DCRUsers table
-    
-                    # create_table_sql = """
-                    # INSERT INTO DCRTable (Graph_id, Simulation_id, Process_instance_name, Description) VALUES ("test", "test", "test", "test");
-                    # """
-                    # cursor.execute(create_table_sql)
-    
-                    self.cnx.commit()
                     temp = "USE `cloud-kursus`;"
                     cursor.execute(temp)
-
-
-                    select_statement = """
-                    SELECT * FROM DCRTable;
-                    """
-
-                    cursor.execute(select_statement)
-                    rows = cursor.fetchall()
-                    print("now dcr table")
-                    for row in rows:
-                            print(row)
-                    select_statement2 = """
-                    SELECT * FROM DCRUsers;
-                    """
-                    cursor.execute(select_statement2)
-                    rows = cursor.fetchall()
-    
-                    print("now users table")
-                    for row in rows:
-                            print(row)
 
                     select_statement3 = f"""
                     SELECT Role FROM DCRUsers WHERE Email = %s;
@@ -99,7 +70,6 @@ class MainApp(App):
             print(f"Error: {err}")
 
         
-
     def build(self):
         #USER INPUT added 2 lvl til lvl 3
         self.lay_3lvl_username.add_widget(self.username_label)
@@ -221,11 +191,11 @@ class MainApp(App):
         counter = 0
         
         for e in events:
-            print(events_json)
-            print("\n\n\n\n")
-            print(self.role[0])
-            print(e['@roles'])
-            print("\n\n\n\n")
+            # print(events_json)
+            # print("\n\n\n\n")
+            # print(self.role[0])
+            # print(e['@roles'])
+            # print("\n\n\n\n")
             if e['@roles'] == self.role[0]:
                 s_inst = SimulationButton(
                         e['@id'],                
