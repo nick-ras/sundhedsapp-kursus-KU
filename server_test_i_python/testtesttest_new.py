@@ -135,7 +135,8 @@ class MainApp(App):
         return self.layout_0lvl_full
     
     def b_instance(self, instance):
-        self.MainApp.Exit() #TODO: SKAL LAVES OM TIL TERMINATE ELLER SÅ NOGET
+        self.terminate_simulation()
+        App.get_running_app().stop()
     
     
     def b_press(self, instance):
@@ -201,23 +202,39 @@ class MainApp(App):
             """
             print("Valdemar: ", self.simulation_id)
             data = (self.simulation_id, self.graph_id.text, "PROCESS_INSTANCE_NAME", "DESCRIPTION")
+            print("Valdemar: ", data)
             self.cursor.execute(insert_statement, data)
             self.cnx.commit()
 
         except mysql.connector.Error as err:
+            print("HALLO")
             print(f"Error: {err}")
 
     def terminate_simulation(self):
-        # Check if there are no pending activities before terminating
-        # Add your logic to check for pending activities
+        #delete_statement = """
+                    #DELETE FROM DCRTable;
+                    #"""
+                    #self.cursor.execute(delete_statement)
+                    #self.cnx.commit()
+                    #print("DCRTable cleared")
+        try:
+            # Check if there are no pending activities before terminating
+            # Add your logic to check for pending activities
 
-        # Delete the current simulation in the database
-        delete_statement = """
-            DELETE FROM DCRTable WHERE Simulation_id = %s;
-        """
-        data = (self.simulation_id,)
-        self.cursor.execute(delete_statement, data)
-        self.cnx.commit()
+             #Delete the current simulation in the database
+            delete_statement = """
+                DELETE FROM DCRTable WHERE Graph_id = %s;
+            """
+            data = (self.graph_id.text,)
+            self.cursor.execute(delete_statement, data)
+            #delete_statement = """DELETE FROM DCRTable;"""
+            #self.cursor.execute(delete_statement)
+            self.cnx.commit()
+            print(f"DCRTable cleared where graph_id = {self.graph_id.text}")
+
+                    
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
     # Add the necessary modifications for terminate button and role-specific tasks
     def create_buttons_of_enabled_events(self, 
@@ -261,10 +278,14 @@ class MainApp(App):
                     s_inst.color = (1,1,0,1)
                     counter += 1
                 
-                if counter == 0:
-                    bu.bind(on_press=self.b_instance)   
+                #if counter == 0:
+                #    bu.bind(on_press=self.b_instance)   
                      
                 self.layout_1lvl_output.add_widget(s_inst)
+
+        if counter == 0:
+            bu.bind(on_press=self.b_instance)  
+
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
