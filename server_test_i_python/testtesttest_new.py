@@ -136,7 +136,7 @@ class MainApp(App):
     
     def b_instance(self, instance):
         self.MainApp.Exit() #TODO: SKAL LAVES OM TIL TERMINATE ELLER SÅ NOGET
-
+    
     
     def b_press(self, instance):
         self.create_instance()
@@ -161,10 +161,22 @@ class MainApp(App):
         return xmltodict.parse(events_xml_clean)
 
     def create_instance(self):
-        #logger ind og får et nyt simulation id
-        newsim_response =  self.post_request()
-        self.simulation_id = newsim_response.headers['simulationID']
-        print("simulation id: " + self.simulation_id)
+        # Check if the graph_id already exists in DCRTable
+        select_existing_statement = """
+            SELECT * FROM DCRTable WHERE Graph_id = %s;
+        """
+        data = (self.graph_id.text,)
+        self.cursor.execute(select_existing_statement, data)
+        existing_row = self.cursor.fetchone()
+
+        if existing_row:
+            # If graph_id already exists, use the existing simulation_id
+            self.simulation_id = str(existing_row[0])
+        else:
+            # If graph_id does not exist, create a new instance
+            newsim_response = self.post_request()
+            self.simulation_id = newsim_response.headers['simulationID']
+
         
         #viser events for den nye simulation
         next_activities_response = self.get_request()
@@ -184,11 +196,11 @@ class MainApp(App):
         try:
             # Insert the simulation data into the database
             insert_statement = """
-                INSERT INTO DCRTable (Graph_id, Simulation_id, Process_instance_name, Description)
+                INSERT INTO DCRTable (Simulation_id, Graph_id, Process_instance_name, Description)
                 VALUES (%s, %s, %s, %s);
             """
             print("Valdemar: ", self.simulation_id)
-            data = (self.graph_id.text, self.simulation_id, "PROCESS_INSTANCE_NAME", "DESCRIPTION")
+            data = (self.simulation_id, self.graph_id.text, "PROCESS_INSTANCE_NAME", "DESCRIPTION")
             self.cursor.execute(insert_statement, data)
             self.cnx.commit()
 
