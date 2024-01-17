@@ -18,7 +18,7 @@ class MainApp(App):
      
         #Login
         self.username = TextInput(hint_text="Enter username",text="birgitte_stage@yahoo.dk")
-        self.password = TextInput(hint_text="Enter password",text="Valdemar_Nick91")
+        self.password = TextInput(hint_text="Enter password", password=True,text="Valdemar_Nick91")
         self.graph_id = TextInput(hint_text="Enter graph id",text="1704571")
 
         #lavet full layout lvl 0
@@ -54,23 +54,16 @@ class MainApp(App):
 
                     # SQL statement to create the DCRUsers table
     
-                    # create_table_sql = """
-                    # INSERT INTO DCRTable (Graph_id, Simulation_id, Process_instance_name, Description) VALUES ("test", "test", "test", "test");
-                    # """
-                    # cursor.execute(create_table_sql)
-    
                     self.cnx.commit()
                     temp = "USE `cloud-kursus`;"
                     cursor.execute(temp)
 
-                
-                    #delete_statement = """
-                    #DELETE FROM DCRTable;
-                    #"""
-                    #self.cursor.execute(delete_statement)
-                    #self.cnx.commit()
-                    #print("DCRTable cleared")
-
+                    update_statement = """
+                    UPDATE DCRUsers SET Role = 'Nurse' WHERE Email = %s;
+                    """
+                    data = (self.username.text,)
+                    cursor.execute(update_statement, data)
+                    self.cnx.commit()
 
                     select_statement = """
                     SELECT * FROM DCRTable;
@@ -78,30 +71,26 @@ class MainApp(App):
 
                     cursor.execute(select_statement)
                     rows = cursor.fetchall()
-                    print("now dcr table")
+                    print("DCRTable:")
                     for row in rows:
-                            print(row)
+                        print(row)
                     select_statement2 = """
                     SELECT * FROM DCRUsers;
                     """
                     cursor.execute(select_statement2)
                     rows = cursor.fetchall()
-    
-                    print("now users table")
+                    print("DCRUsers:")
                     for row in rows:
-                            print(row)
-
+                        print(row)
+                
                     select_statement3 = f"""
                     SELECT Role FROM DCRUsers WHERE Email = %s;
                     """
                     data = (self.username.text,)
                     cursor.execute(select_statement3, data)
                     self.role = cursor.fetchone()
-                    print(f"ROLLE: {self.role}")
 
                     cursor.close()
-
-                #self.cnx.close()
             
         except mysql.connector.Error as err:
             print(f"Error: {err}")
@@ -138,7 +127,6 @@ class MainApp(App):
         App.get_running_app().stop()
 
     def b_instance_terminate(self, instance):
-        print("VALDEMAR : Terminate button pressed")
         self.terminate_simulation()
         App.get_running_app().stop()
     
@@ -203,23 +191,14 @@ class MainApp(App):
                 INSERT INTO DCRTable (Simulation_id, Graph_id, Process_instance_name, Description)
                 VALUES (%s, %s, %s, %s);
             """
-            print("Valdemar: ", self.simulation_id)
             data = (self.simulation_id, self.graph_id.text, "PROCESS_INSTANCE_NAME", "DESCRIPTION")
-            print("Valdemar: ", data)
             self.cursor.execute(insert_statement, data)
             self.cnx.commit()
 
         except mysql.connector.Error as err:
-            print("HALLO")
             print(f"Error: {err}")
 
     def terminate_simulation(self):
-        #delete_statement = """
-                    #DELETE FROM DCRTable;
-                    #"""
-                    #self.cursor.execute(delete_statement)
-                    #self.cnx.commit()
-                    #print("DCRTable cleared")
         try:
             # Check if there are no pending activities before terminating
             # Add your logic to check for pending activities
@@ -261,11 +240,6 @@ class MainApp(App):
         counter = 0
         
         for e in events:
-            print(events_json)
-            print("\n\n\n\n")
-            print(self.role[0])
-            print(e['@roles'])
-            print("\n\n\n\n")
             if e['@roles'] == self.role[0]:
                 s_inst = SimulationButton(
                         e['@id'],                
@@ -290,7 +264,7 @@ class MainApp(App):
         else:
             bu.bind(on_press=self.b_instance) 
 
-class SimulationButton(Button, MainApp):
+class SimulationButton(Button):#, MainApp):
     def __init__(self, event_id: int,
             graph_id: str,
             simulation_id: str,
