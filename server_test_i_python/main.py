@@ -37,7 +37,7 @@ class MainApp(App):
         # Connect to the MySQL database
         try:
                 self.cnx = mysql.connector.connect(
-                    user=env.get("USERNAME"),
+                    user="cloud",#env.get("USERNAME"),
                     password="Valdemar20-",  # env.get("PASSWORD"),
                     host="cloud-kursus.mysql.database.azure.com",
                     port=3306,
