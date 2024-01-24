@@ -19,9 +19,9 @@ class MainApp(App):
         self.graph_id_label = Label(text="Graph ID")
      
         #Login
-        self.username = TextInput(hint_text="Enter username")
-        self.password = TextInput(hint_text="Enter password")
-        self.graph_id = TextInput(hint_text="Enter graph id")
+        self.username = TextInput(hint_text="Enter username",text="birgitte_stage@yahoo.dk")
+        self.password = TextInput(hint_text="Enter password",text="Valdemar_Nick91")
+        self.graph_id = TextInput(hint_text="Enter graph id",text="1704571")
 
         #lavet full layout lvl 0
         self.layout_0lvl_full = BoxLayout(orientation='horizontal')
@@ -36,7 +36,7 @@ class MainApp(App):
         self.lay_3lvl_password = BoxLayout(orientation='horizontal')
         self.lay_3lvl_graphid = BoxLayout(orientation='horizontal')
 
-
+    
     def build(self):
         #USER INPUT added 2 lvl til lvl 3
         self.lay_3lvl_username.add_widget(self.username_label)
@@ -89,6 +89,7 @@ class MainApp(App):
         #logger ind og får et nyt simulation id
         newsim_response =  self.post_request()
         self.simulation_id = newsim_response.headers['simulationID']
+        print("simulation id: " + self.simulation_id)
         
         #viser events for den nye simulation
         next_activities_response = self.get_request()
@@ -113,9 +114,12 @@ class MainApp(App):
             events = [events_json['events']['event']]
         else:
             events = events_json['events']['event']
-        
         for e in events:
-            s_inst = SimulationButton(
+            print(events_json)
+            print("\n\n\n\n")
+            
+            if e['@roles'] == 'Nurse':
+                s_inst = SimulationButton(
                     e['@id'],                
                     graph_id,                
                     sim_id,                
@@ -123,11 +127,10 @@ class MainApp(App):
                     auth[1],                     
                     e['@label']
                     )
-
             #Det farver pending gult
-            if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
-                s_inst.color = (1,1,0,1)
-            self.layout_1lvl_output.add_widget(s_inst)
+                if e['@pending'] == 'true' or e['@EffectivelyPending'] == 'true':
+                    s_inst.color = (1,1,0,1)
+        self.layout_1lvl_output.add_widget(s_inst)
 
 class SimulationButton(Button, MainApp):
     def __init__(self, event_id: int,
