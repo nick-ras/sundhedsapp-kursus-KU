@@ -7,6 +7,7 @@ import xmltodict
 import httpx
 import mysql.connector
 from os import environ as env
+from dotenv import load_dotenv
 
 class MainApp(App):
     def __init__(self):
@@ -17,8 +18,8 @@ class MainApp(App):
         self.graph_id_label = Label(text="Graph ID")
      
         #Login
-        self.username = TextInput(hint_text="Enter username",text="birgitte_stage@yahoo.dk")
-        self.password = TextInput(hint_text="Enter password", password=True,text="Valdemar_Nick91")
+        self.username = TextInput(hint_text="Enter username",text=env.get("DCR_LOGIN"))
+        self.password = TextInput(hint_text="Enter password", password=True,text=env.get("DCR_PASS"))
         self.graph_id = TextInput(hint_text="Enter graph id",text="1704571")
 
         #lavet full layout lvl 0
@@ -37,9 +38,9 @@ class MainApp(App):
         # Connect to the MySQL database
         try:
                 self.cnx = mysql.connector.connect(
-                    user="cloud",#env.get("USERNAME"),
-                    password="Valdemar20-",  # env.get("PASSWORD"),
-                    host="cloud-kursus.mysql.database.azure.com",
+                    user=env.get("DB_USER"),
+                    password=env.get("DB_PASS"),
+                    host=env.get("DB_HOST"),
                     port=3306,
                     database=env.get("DATABASE"),
                     ssl_disabled=True
@@ -298,6 +299,10 @@ class SimulationButton(Button):#, MainApp):
         current_main_app_instance.create_buttons_of_enabled_events(self.graph_id, self.simulation_id, (self.username, self.password), events_json)
 
 print("Starting app")
+print("AAAAAAAAAAAAAAAAAAAA vAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa")
+load_dotenv() 
+temp = env.get('DB_USER')
+print(temp)
 
 current_main_app_instance = None
 if __name__ == '__main__':
